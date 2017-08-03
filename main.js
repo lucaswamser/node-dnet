@@ -3,7 +3,6 @@ var Struct = require('ref-struct');
 var ArrayType = require('ref-array');
 var ref = require('ref')
 var fs = require('fs')
-var Jimp = require("jimp");
 
 var Image = Struct({
   'w': 'int',
@@ -41,15 +40,21 @@ var lib = ffi.Library('libdarknet', {
 
 
 exports.loadImage = function (img){
- return lib.load_image_color(img,0,0);
+ a = lib.load_image_color(img,0,0);
+  if (a.w == 0)
+	throw new Error("Invalid Image")
+ return a;
 }
 
 exports.loadImageBuffer = function (buffer){
  fs.writeFileSync("/tmp/dknetin", buffer);
- return lib.load_image_color("/tmp/dknetin",0,0);
+ a = lib.load_image_color("/tmp/dknetin",0,0);
+ if (a.w == 0)
+	throw new Error("Invalid Image")
+ return a;
 }
 
-exports.getpredictdata = function (a,im,cb){
+exports.getpredictdata = function (a,im,ag,cb){
  out = []
 
 for (i = 0; i < a.length; i++) { 
@@ -62,11 +67,11 @@ for (i = 0; i < a.length; i++) {
   obj.box.y =  parseInt((b.y-b.h/2.)*im.h);
   obj.box.w  = parseInt(b.w*im.w);
   obj.box.h  = parseInt(b.h*im.h)
-  if (cb) 
-   cb(obj);
+  if (ag) 
+   ag(obj);
   out.push(obj);
   }
- return out;
+ cb(out);
 }
 
 exports.drawDetecions = function (img,a){
