@@ -3,6 +3,8 @@ var Struct = require('ref-struct');
 var ArrayType = require('ref-array');
 var ref = require('ref')
 var fs = require('fs')
+var Jimp = require("jimp");
+
 var Image = Struct({
   'w': 'int',
   'h': 'int',
@@ -47,18 +49,21 @@ exports.loadImageBuffer = function (buffer){
  return lib.load_image_color("/tmp/dknetin",0,0);
 }
 
-exports.getpredictdata = function (a){
+exports.getpredictdata = function (a,im,cb){
  out = []
 
- for (i = 0; i < a.length; i++) { 
+for (i = 0; i < a.length; i++) { 
   obj = {}
   obj.classname = a[i].classname;
   obj.prob = a[i].prob;
   obj.box = {}
-  obj.box.x = a[i].b.x;
-  obj.box.y = a[i].b.y;
-  obj.box.w = a[i].b.w;
-  obj.box.h = a[i].b.h;
+  b = a[i].b;
+  obj.box.x  = parseInt((b.x-b.w/2.)*im.w);
+  obj.box.y =  parseInt((b.y-b.h/2.)*im.h);
+  obj.box.w  = parseInt(b.w*im.w);
+  obj.box.h  = parseInt(b.h*im.h)
+  if (cb) 
+   cb(obj);
   out.push(obj);
   }
  return out;
