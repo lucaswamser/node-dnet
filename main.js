@@ -105,7 +105,7 @@ this.net = lib.load_network_p(cfg, weights,0);
 
 
 this.predict = function (im,thresh = 0.25){
- var a = new DetectionArray(50) // by length
+ var a = new DetectionArray(200) // by length
  count = lib.predict(this.net,im,thresh,this.names,a)
  var out = new DetectionArray(count) // by length
  for (i = 0; i < count; i++) { 
