@@ -89,31 +89,37 @@ exports.readImageBuffer = function (img){
 }
 
 
-exports.Network = function (weights,cfg,names) { 
+exports.loadNetwork =  function (weights,cfg,names, cb) { 
+	if (!(fs.existsSync(weights) && fs.existsSync(cfg) && fs.existsSync(names))){
+	    var err = new Error('Network not found')
+	    cb(err);
+	}
 
-if (!(fs.existsSync(weights) && fs.existsSync(cfg) && fs.existsSync(names))){
-    var err = new Error('Network not found')
-    throw err
+	lib.load_network_p.async(cfg, weights,0, (err,res) =>{
+ 		network = {}
+		network.name = weights;
+		network.cfg = cfg;
+		network.names = names;
+		network.net = res;
+		cb(network);
+	});
+
+
 }
 
-this.name = weights;
-this.cfg = cfg;
-this.names = names;
-this.net = lib.load_network_p(cfg, weights,0);
 
 
-
-
-this.predict = function (im,thresh = 0.25){
+exports.predict = function (im,network,cb,thresh = 0.25){
  var a = new DetectionArray(200) // by length
- count = lib.predict(this.net,im,thresh,this.names,a)
- var out = new DetectionArray(count) // by length
- for (i = 0; i < count; i++) { 
-  out[i]= a[i]
- }
- return out;
+ lib.predict.async(network.net,im,thresh,network.names,a,(err,res) =>{
+	var out = new DetectionArray(res) // by length
+	for (i = 0; i < res; i++) { 
+	  out[i]= a[i]
+	 }
+	cb(out)
+ });
 }
 
-};
+
 
 

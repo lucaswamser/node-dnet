@@ -1,4 +1,4 @@
-lib = require("node-dnet")
+lib = require("../main")
 fs = require("fs")
 var Jimp = require("jimp");
 

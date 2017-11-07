@@ -1,20 +1,22 @@
-lib = require("node-dnet")
+lib = require("../main")
 fs = require("fs")
-var Jimp = require("jimp");
 
-network = new lib.Network("/var/trains/generico/net.weights","/var/trains/generico/net.cfg","/var/trains/generico/net.names")
-
-bf = fs.readFileSync('dog.jpg');
-im = lib.loadImageBuffer(bf)
-p = network.predict(im)
-data = lib.getpredictdata(p,im, function(obj){
-Jimp.read(bf, function (err, lenna) {
-    if (err) throw err;
-        lenna.crop(obj.box.x, obj.box.y,obj.box.w, obj.box.h).write(obj.classname+".jpg"); // save
-    });
-});
+bf = fs.readFileSync('image.jpg');
+im = lib.loadImageBuffer(bf);
 
 
-console.log(data)
-lib.drawDetecions(im,p)
-lib.saveImage(im,"out2")
+bf2 = fs.readFileSync('image2.jpg');
+im2 = lib.loadImageBuffer(bf2);
+
+lib.loadNetwork("/var/trains/generico/net.weights","/var/trains/generico/net.cfg","/var/trains/generico/net.names", (net) =>{
+	lib.predict(im,net,(p) =>{
+		data = lib.getpredictdata(p,im, null, (r) => console.log(r))
+		lib.drawDetecions(im,p)
+		lib.saveImage(im,"out2")
+	})
+	
+})
+
+
+console.log("oiiii");
+
