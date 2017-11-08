@@ -1,6 +1,8 @@
 var ffi = require('ffi');
 var Struct = require('ref-struct');
 var ArrayType = require('ref-array');
+var StringArray = ArrayType('string');
+
 var ref = require('ref')
 var fs = require('fs')
 
@@ -33,6 +35,7 @@ var lib = ffi.Library('libdarknet', {
   'load_network_p': [ 'pointer', [ 'string','string','int' ] ],
   'load_image_color': [ Image, [ 'string','int','int' ] ],
   'save_image': [ 'void', [ Image,'string'] ],
+  'train_detector_i': [ 'void', ['pointer',StringArray,'int'] ],
   'draw_detections_im': [ 'void', [ Image,DetectionArray,'int'] ],
   'predict': [ 'int', [ 'pointer',Image, 'float','string',DetectionArray] ]
 });
@@ -120,6 +123,10 @@ exports.predict = function (im,network,cb,thresh = 0.25){
  });
 }
 
+exports.train = function (network,imgs){
+  lib.train_detector_i(network.net,new StringArray(imgs),imgs.length);
+ }
+ 
 
 
 
