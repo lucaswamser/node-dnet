@@ -66,10 +66,10 @@ for (i = 0; i < a.length; i++) {
   obj.prob = a[i].prob;
   obj.box = {}
   b = a[i].b;
-  obj.box.x  = parseInt((b.x-b.w/2.)*im.w);
-  obj.box.y =  parseInt((b.y-b.h/2.)*im.h);
-  obj.box.w  = parseInt(b.w*im.w);
-  obj.box.h  = parseInt(b.h*im.h)
+  obj.box.x  = ((b.x-b.w/2.)*100);
+  obj.box.y =  ((b.y-b.h/2.)*100);
+  obj.box.w  = ((b.w)*100);
+  obj.box.h  = ((b.h)*100)
   if (ag) 
    ag(obj);
   out.push(obj);
