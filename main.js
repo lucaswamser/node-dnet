@@ -13,6 +13,7 @@ var Image = Struct({
   'data': 'pointer'
 });
 
+
 var Box = Struct({
   'x': 'float',
   'y': 'float',
@@ -36,6 +37,9 @@ var lib = ffi.Library('libdarknet', {
   'load_image_color': [ Image, [ 'string','int','int' ] ],
   'save_image': [ 'void', [ Image,'string'] ],
   'train_detector_i': [ 'void', ['pointer',StringArray,'int'] ],
+  'load_train_t': [ 'pointer', ['pointer',StringArray,'int'] ],
+  'train_t': [ 'void', ['pointer','int'] ],
+  'save_weights_i' : [ 'void', ['pointer','string'] ],
   'draw_detections_im': [ 'void', [ Image,DetectionArray,'int'] ],
   'predict': [ 'int', [ 'pointer',Image, 'float','string',DetectionArray] ]
 });
@@ -126,6 +130,22 @@ exports.predict = function (im,network,cb,thresh = 0.25){
 exports.train = function (network,imgs){
   lib.train_detector_i(network.net,new StringArray(imgs),imgs.length);
  }
+
+ exports.loadTrain = function (network,imgs){
+  return lib.load_train_t(network.net,new StringArray(imgs),imgs.length);
+ }
+
+
+ exports.trainP = function (traind,i){
+  lib.train_t(traind,i);
+ }
+ 
+ 
+
+ exports.saveWeights = function (network,name){
+  lib.save_weights_i(network.net,name);
+ }
+ 
  
 
 
