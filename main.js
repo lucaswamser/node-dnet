@@ -98,9 +98,8 @@ exports.readImageBuffer = function (img){
 
 exports.loadNetwork =  function (weights,cfg,names, cb) { 
 	if (!(fs.existsSync(weights) && fs.existsSync(cfg) && fs.existsSync(names))){
-	    var err = new Error('Network not found')
-	    cb(err);
-	}
+	    throw new Error('Network not found')
+	}else{
 
 	lib.load_network_p.async(cfg, weights,0, (err,res) =>{
  		network = {}
@@ -109,9 +108,8 @@ exports.loadNetwork =  function (weights,cfg,names, cb) {
 		network.names = names;
 		network.net = res;
 		cb(network);
-	});
-
-
+  });
+}
 }
 
 
