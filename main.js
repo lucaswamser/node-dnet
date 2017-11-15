@@ -82,7 +82,6 @@ for (i = 0; i < a.length; i++) {
 }
 
 exports.drawDetecions = function (img,a){
- console.log(a.length)
  lib.draw_detections_im(img,a,a.length)
 }
 
@@ -132,7 +131,15 @@ exports.train = function (network,imgs){
  }
 
  exports.loadTrain = function (network,imgs){
-  return lib.load_train_t(network.net,new StringArray(imgs),imgs.length);
+  imgsv = []
+  for (var i in imgs) {
+    val = imgs[i];
+    if (fs.existsSync(imgs[i].replace(imgs[i].split('.').pop(),"txt")) && fs.existsSync(imgs[i])) {
+	imgsv.push(imgs[i])
+    }	
+  }
+  console.log(imgsv)
+  return lib.load_train_t(network.net,new StringArray(imgsv),imgsv.length-1);
  }
 
 
