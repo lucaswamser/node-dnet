@@ -70,10 +70,10 @@ for (i = 0; i < a.length; i++) {
   obj.prob = a[i].prob;
   obj.box = {}
   b = a[i].b;
-  obj.box.x  = parseInt((b.x-b.w/2.)*im.w);
-  obj.box.y =  parseInt((b.y-b.h/2.)*im.h);
-  obj.box.w  = parseInt(b.w*im.w);
-  obj.box.h  = parseInt(b.h*im.h)
+  obj.box.x  = ((b.x-b.w/2.)*100);
+  obj.box.y =  ((b.y-b.h/2.)*100);
+  obj.box.w  = ((b.w)*100);
+  obj.box.h  = ((b.h)*100)
   if (ag) 
    ag(obj);
   out.push(obj);
@@ -82,7 +82,6 @@ for (i = 0; i < a.length; i++) {
 }
 
 exports.drawDetecions = function (img,a){
- console.log(a.length)
  lib.draw_detections_im(img,a,a.length)
 }
 
@@ -92,7 +91,10 @@ exports.saveImage = function (img,name){
 
 exports.readImageBuffer = function (img){
  lib.save_image(img,"/tmp/dknetout")
- return fs.readFileSync("/tmp/dknetout.jpg")
+ if (fs.existsSync("/tmp/dknetout.jpg"))
+  return fs.readFileSync("/tmp/dknetout.jpg");
+ if (fs.existsSync("/tmp/dknetout.png"))
+  return fs.readFileSync("/tmp/dknetout.png"); 
 }
 
 
@@ -130,7 +132,15 @@ exports.train = function (network,imgs){
  }
 
  exports.loadTrain = function (network,imgs){
-  return lib.load_train_t(network.net,new StringArray(imgs),imgs.length);
+  imgsv = []
+  for (var i in imgs) {
+    val = imgs[i];
+    if (fs.existsSync(imgs[i].replace(imgs[i].split('.').pop(),"txt")) && fs.existsSync(imgs[i])) {
+	imgsv.push(imgs[i])
+    }	
+  }
+  console.log(imgsv)
+  return lib.load_train_t(network.net,new StringArray(imgsv),imgsv.length-1);
  }
 
 
