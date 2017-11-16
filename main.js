@@ -39,6 +39,8 @@ var lib = ffi.Library('libdarknet', {
   'train_detector_i': [ 'void', ['pointer',StringArray,'int'] ],
   'load_train_t': [ 'pointer', ['pointer',StringArray,'int'] ],
   'train_t': [ 'void', ['pointer','int'] ],
+  'free_detections': [ 'void', [DetectionArray,'int'] ],
+  'free_image':['void',[Image]],
   'save_weights_i' : [ 'void', ['pointer','string'] ],
   'draw_detections_im': [ 'void', [ Image,DetectionArray,'int'] ],
   'predict': [ 'int', [ 'pointer',Image, 'float','string',DetectionArray] ]
@@ -97,12 +99,19 @@ exports.readImageBuffer = function (img){
   return fs.readFileSync("/tmp/dknetout.png"); 
 }
 
+exports.freeDetections = function (a){
+  lib.free_detections(a,a.length)
+ }
+
+ exports.freeImage = function (im){
+  lib.free_image(im)
+ }
+
 
 exports.loadNetwork =  function (weights,cfg,names, cb) { 
 	if (!(fs.existsSync(weights) && fs.existsSync(cfg) && fs.existsSync(names))){
 	    throw new Error('Network not found')
 	}else{
-
 	lib.load_network_p.async(cfg, weights,0, (err,res) =>{
  		network = {}
 		network.name = weights;
